@@ -12,8 +12,8 @@ Game ini dikembangkan sebagai bagian dari **Tugas Besar Multimedia**, dengan kol
 | Nama | NIM (Opsional) | Jobdesk |
 |------|----------------|--------|
 | Asavira Azzahra | 122140067 | Sound |
-| Dinda Joycehana | 122140 | Hand Landmarking |
-| Hizkia C | 122140 | Camera |
+| Dinda Joycehana | 122140048 | Hand Landmarking |
+| Hizkia C | 122140110 | Camera |
 
 ---
 
