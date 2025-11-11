@@ -9,11 +9,11 @@ Game ini dikembangkan sebagai bagian dari **Tugas Besar Multimedia**, dengan kol
 
 ## 👥 **Anggota Kelompok**
 
-| Nama | NIM (Opsional) | Tugas |
+| Nama | NIM (Opsional) | Jobdesk |
 |------|----------------|--------|
-| Asavira Azzahra | – | 🎵 Sound & README |
-| Dinda Joycehana | – | 🎥 Camera |
-| Hizkia C | – | ✋ Hand Landmarking |
+| Asavira Azzahra | – | Sound |
+| Dinda Joycehana | – | Hand Landmarking |
+| Hizkia C | – | Camera |
 
 ---
 
