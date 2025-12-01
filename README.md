@@ -1,47 +1,97 @@
-# 🎮 Captcha Challenge
+# 🎮 Captcha Challenge — Live Glass Puzzle Game
 
-**Captcha Challenge** adalah game interaktif berbasis *hand landmark recognition* yang menggabungkan teknologi *computer vision* dan *audio feedback*.  
-Pemain diminta untuk menyusun potongan gambar seperti puzzle CAPTCHA secara real-time menggunakan gerakan tangan di depan kamera.  
+**Captcha Challenge** adalah permainan puzzle interaktif berbasis *hand tracking* yang memanfaatkan teknologi *computer vision*, *glass overlay system*, dan *gesture-based interaction*.  
+Pemain harus menyusun kembali potongan tampilan webcam yang dipecah menjadi blok-blok “kaca” hingga membentuk gambar live yang utuh.
 
-Game ini dikembangkan sebagai bagian dari **Tugas Besar Multimedia**, dengan kolaborasi tiga anggota tim yang memiliki tanggung jawab berbeda pada setiap modul.
-
----
-
-## 👥 **Anggota Kelompok**
-
-| Nama | NIM (Opsional) | Jobdesk |
-|------|----------------|--------|
-| Asavira Azzahra | 122140067 | Sound |
-| Dinda Joycehana | 122140048 | Hand Landmarking |
-| Hizkia C | 122140110 | Camera |
+Project ini dikembangkan sebagai bagian dari **Tugas Besar Multimedia**.
 
 ---
 
-## 🚀 **Deskripsi Singkat**
+## 👥 Anggota Kelompok
 
-### 🎯 Tujuan
-Menciptakan pengalaman interaktif di mana pengguna dapat berinteraksi langsung dengan sistem CAPTCHA menggunakan tangan mereka sendiri.  
-Game ini mengombinasikan pengenalan gerakan tangan (*hand landmark recognition*), deteksi posisi puzzle, serta efek suara yang memberikan umpan balik secara real-time.
-
----
-
-## ⚙️ **Fitur Utama**
-- 🎥 **Kamera Real-Time** – menampilkan umpan langsung dari webcam.  
-- ✋ **Deteksi Tangan (MediaPipe Hands)** – mengenali gesture tangan, termasuk pinch (🤏🏻).  
-- 🧩 **Puzzle CAPTCHA Interaktif** – potongan gambar dapat dipindahkan dan disusun ulang.  
-- 🔊 **Efek Suara Interaktif** – setiap gerakan dan keberhasilan memberikan umpan balik suara “klik” dan “cling”.  
+| Nama              | NIM        |
+|-------------------|------------|
+| Dinda Joycehana   | 122140048  |
+| Hizkia C          | 122140110  |
+| Asavira Azzahra   | 122140067  |
 
 ---
 
-## 🧰 **Teknologi yang Digunakan**
-| Library | Fungsi |
-|----------|---------|
-| **OpenCV** | Menangkap dan memproses gambar dari kamera. |
-| **MediaPipe Hands** | Mendeteksi posisi jari dan gesture tangan. |
-| **Pygame** | Mengatur dan memutar efek suara. |
-| **Python 3.x** | Bahasa utama untuk logika dan integrasi antar modul. |
+## 🚀 Deskripsi Singkat
+
+Pada versi terbaru, **Captcha Challenge** menggunakan sistem *Live Glass Puzzle*,  
+di mana tampilan webcam **dibagi menjadi beberapa glass blocks**.  
+Hand Tracking digunakan untuk:
+
+- mengambil blok kaca dengan gesture **pinch (🤏🏻)**
+- menukar posisi dua blok
+- menyusun ulang hingga membentuk gambar webcam yang benar
+
+📌 **Catatan:**  
+Nama project **tetap "Captcha Challenge"**, meskipun puzzle yang disusun adalah **grid dari glass overlay**, bukan grid landmark tangan.  
+Landmark hanya digunakan untuk gesture namun *ditutup (overlay)* oleh kaca puzzle agar tampilan lebih bersih.
 
 ---
+
+## 🎮 Cara Bermain
+
+1. Jalankan program  
+2. Tekan **SPACE** untuk memulai permainan  
+3. Gunakan gesture **pinch** (ibu jari + telunjuk) untuk mengambil blok  
+4. Pindahkan tangan ke blok lain sambil pinch  
+5. Lepaskan pinch untuk **menukar posisi dua blok**  
+6. Susun semua blok hingga gambar kembali utuh  
+7. Tekan **R** untuk reset  
+8. Tekan **Q** untuk keluar  
+
+---
+
+## 🛠 Instalasi
+
+### Prasyarat
+- Python 3.8 atau lebih baru  
+- Webcam aktif  
+- OS Windows / macOS / Linux  
+
+### Langkah Instalasi
+
+1. Clone repository:
+   ```bash
+   git clone <link-repo-kalian>
+2. Install dependencies:
+    ```bash
+    pip install -r requirements.txt
+3. Menjalankan Game:
+    ```bash
+    python main.py
+
 
 ## 🧩 **Struktur Proyek**
+Captcha_Challenge/
+│
+├── main.py                 # Entry point utama
+├── README.md               # Dokumentasi proyek
+├── requirements.txt        # Dependencies
+│
+└── game/                   # Package inti game
+    ├── __init__.py
+    ├── puzzle.py           # Logika game & game loop
+    ├── hand_tracker.py     # Tracking tangan dengan MediaPipe
+    ├── puzzle_pieces.py    # Pengaturan potongan puzzle
+    └── game_renderer.py    # Renderer visual
+
+## 🧩 **Fitur Utama**
+✋ Hand Tracking real-time (MediaPipe)
+🤏 Gesture pinch untuk mengambil & menukar blok
+🪟 Puzzle dari tampilan webcam live
+🔢 Counter pergerakan
+🟩 Highlight blok yang sudah benar
+🏆 Layar kemenangan saat puzzle tersusun
+🔄 Reset & replay
+
+## 🔧 **Teknologi yang Digunakan**
+- OpenCV → Video capture & manipulasi frame
+- MediaPipe Hands → Hand tracking + gesture detection
+- NumPy → Operasi array
+- Pygame → Efek suara (klik & menang)
 
