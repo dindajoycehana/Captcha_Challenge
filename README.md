@@ -67,18 +67,21 @@ Landmark hanya digunakan untuk gesture namun *ditutup (overlay)* oleh kaca puzzl
 
 
 ## 🧩 **Struktur Proyek**
-Captcha_Challenge/
-│
-├── main.py                 # Entry point utama
-├── README.md               # Dokumentasi proyek
-├── requirements.txt        # Dependencies
-│
-└── game/                   # Package inti game
+- Menjalankan Game:
+    ```bash
+    Captcha_Challenge/
+    │
+    ├── main.py                 # Entry point utama
+    ├── README.md               # Dokumentasi proyek'
+    ├── requirements.txt        # Dependencies
+    │
+    └── game/                   # Package inti game
     ├── __init__.py
     ├── puzzle.py           # Logika game & game loop
     ├── hand_tracker.py     # Tracking tangan dengan MediaPipe
     ├── puzzle_pieces.py    # Pengaturan potongan puzzle
     └── game_renderer.py    # Renderer visual
+    
 
 ## 🧩 **Fitur Utama**
 ✋ Hand Tracking real-time (MediaPipe)
@@ -94,4 +97,39 @@ Captcha_Challenge/
 - MediaPipe Hands → Hand tracking + gesture detection
 - NumPy → Operasi array
 - Pygame → Efek suara (klik & menang)
+
+## ⚙ **Kustomisasi**
+- Atur ukuran grid puzzle di ```main.py```:
+    ```bash
+    puzzle = LiveGlassPuzzle(grid_size=3)
+Pilihan:
+- 3 → Puzzle 3x3 (9 pieces) – Default
+- 4 → Puzzle 4x4 (16 pieces)
+- 5 → Puzzle 5x5 (25 pieces)
+
+## 🐛 **Troubleshooting**
+Clone repository:
+- Pastikan webcam tidak digunakan aplikasi lain
+- Cek permission webcam pada Python
+
+Hand tracking kurang akurat
+- Pencahayaan kurang
+- Jarak ideal: 30–50 cm
+- Pastikan tangan terlihat jelas seluruhnya
+
+
+- **Error instalasi dependencies**
+    ```bash
+    puzzle = LiveGlassPuzzle(grid_size=3)
+
+## 👨‍💻 Kontribusi
+
+Kontribusi sangat diterima!
+Silakan buat Pull Request atau laporkan bug melalui Issues.
+
+## 📝 License
+
+Proyek ini dibuat untuk tujuan edukasi dan hiburan dalam rangka Tugas Besar Multimedia.
+
+# 🎉 Selamat bermain Captcha Challenge — Live Glass Puzzle Game!
 
