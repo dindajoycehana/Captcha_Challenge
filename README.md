@@ -13,7 +13,7 @@ Game ini dikembangkan sebagai bagian dari **Tugas Besar Multimedia**, dengan kol
 |------|----------------|--------|
 | Asavira Azzahra | – | Sound |
 | Dinda Joycehana | – | Hand Landmarking |
-| Hizkia C | – | Camera |
+| Hizkia Christovita Siahaan | – | Camera |
 
 ---
 
