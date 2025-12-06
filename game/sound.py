@@ -1,24 +1,56 @@
+import os
 import pygame
+
+#  Inisialisasi pygame mixer
 pygame.mixer.init()
 
-click_sound = pygame.mixer.Sound("assets/sounds/click.wav")
-win_sound = pygame.mixer.Sound("assets/sounds/win.wav")
 
+#  Path folder sounds harus relative terhadap file ini
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SOUND_DIR = os.path.join(BASE_DIR, "assets", "sounds")
+
+# File sound
+CLICK_PATH = os.path.join(SOUND_DIR, "click.wav")
+WIN_PATH   = os.path.join(SOUND_DIR, "win.wav")
+
+
+#  Load audio dengan pengecekan aman
+def load_sound(path):
+    if not os.path.exists(path):
+        print(f"[WARNING] File sound tidak ditemukan: {path}")
+        return None
+    return pygame.mixer.Sound(path)
+
+click_sound = load_sound(CLICK_PATH)
+win_sound   = load_sound(WIN_PATH)
+
+
+#  Fungsi bermain sound
 def play_click_sound():
-    """suara klik ketika puzzle berhasil ditempatkan"""
-    click_sound.play()
-    click_sound.set_volume(1.0)
+    """Mainkan suara klik ketika swap puzzle"""
+    if click_sound:
+        click_sound.set_volume(1.0)
+        click_sound.play()
+
 
 def play_win_sound():
-    """suara ketika puzzle selesai"""
-    win_sound.set_volume(0.5)
-    win_sound.play()
+    """Mainkan suara saat puzzle selesai"""
+    if win_sound:
+        win_sound.set_volume(0.6)
+        win_sound.play()
 
+
+#  Test manual (jika file ini dijalankan sendiri)
 if __name__ == "__main__":
-    print("Testing suara klik")
-    play_click_sound()
-    pygame.time.wait(1500)  # jeda 1,5 detik
+    print("Testing sounds...")
 
-    print("Testing suara menang")
+    print("Play click sound...")
+    play_click_sound()
+    pygame.time.wait(1200)
+
+    print("Play win sound...")
     play_win_sound()
-    pygame.time.wait(2000)  # jeda 2 detik
+    pygame.time.wait(2000)
+
+    print("Done")
+

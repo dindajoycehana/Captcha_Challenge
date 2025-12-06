@@ -4,6 +4,7 @@ import numpy as np
 from .hand_tracker import HandTracker
 from .puzzle_pieces import PuzzlePieces
 from .game_renderer import GameRenderer
+from .sound import play_click_sound, play_win_sound
 
 class LiveGlassPuzzle:
     def __init__(self, grid_size=3):
@@ -71,7 +72,12 @@ class LiveGlassPuzzle:
                 if target_piece and target_piece['id'] != self.selected_piece['id']:
                     self.puzzle_pieces.swap_pieces(self.selected_piece, target_piece)
                     self.move_count += 1
+                    play_click_sound() #play sound swap
                     self.solved = self.puzzle_pieces.check_solved()
+
+                    if self.puzzle_pieces.check_solved():
+                        self.solved = True
+                        play_win_sound() #play win sound
                 
                 self.selected_piece = None
         
