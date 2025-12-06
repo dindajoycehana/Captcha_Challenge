@@ -52,5 +52,5 @@ if __name__ == "__main__":
     play_win_sound()
     pygame.time.wait(2000)
 
-    print("Done.")
+    print("Done")
 
