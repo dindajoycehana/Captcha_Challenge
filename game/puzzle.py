@@ -27,6 +27,7 @@ class LiveGlassPuzzle:
         self.solved = False
         self.move_count = 0
         self.game_started = False
+        self.selecting_grid = True  # NEW: state for grid selection
 
         # Mouse click storage
         self.last_click = None
@@ -45,6 +46,21 @@ class LiveGlassPuzzle:
         start_x = (w - size) // 2
         cropped = frame[start_y:start_y + size, start_x:start_x + size]
         return cv2.resize(cropped, (target_size, target_size))
+    
+    def reinitialize_game(self, new_grid_size):
+        """Reinitialize game components with new grid size"""
+        self.grid_size = new_grid_size
+        self.total_pieces = new_grid_size * new_grid_size
+        self.piece_size = self.puzzle_size // new_grid_size
+        
+        # Reinitialize components
+        self.puzzle_pieces = PuzzlePieces(new_grid_size)
+        self.renderer = GameRenderer(self.puzzle_size, self.piece_size)
+        
+        # Reset game state
+        self.selected_piece = None
+        self.solved = False
+        self.move_count = 0
     
     def handle_hand_interaction(self, hand_landmarks, display):
         hand_pos = self.hand_tracker.get_hand_position(hand_landmarks, display.shape)
@@ -96,8 +112,6 @@ class LiveGlassPuzzle:
 
         return display
 
-    
-
     # ===============
     # MAIN GAME LOOP
     # ===============
@@ -126,7 +140,11 @@ class LiveGlassPuzzle:
                 results = None
             
             # DISPLAY
-            if self.game_started:
+            if self.selecting_grid:
+                # Show grid selection menu
+                display = self.renderer.draw_grid_selection_menu(cropped_frame)
+                
+            elif self.game_started:
                 display = self.renderer.draw_puzzle(
                     cropped_frame, 
                     self.puzzle_pieces.pieces,
@@ -138,7 +156,7 @@ class LiveGlassPuzzle:
                 display = self.renderer.draw_recaptcha_header(
                     display,
                     title="CAPTCHA Challenge",
-                    subtitle="Click play again for new verification"
+                    subtitle=f"Solve the {self.grid_size}x{self.grid_size} puzzle"
                 )
                 display = self.renderer.draw_recaptcha_footer(display, solved=self.solved)
 
@@ -165,41 +183,57 @@ class LiveGlassPuzzle:
                 display = self.renderer.draw_solved_screen(display, self.move_count)
 
             # ----------------------------------------------------
-            # HANDLE MOUSE CLICKS (QUIT & PLAY AGAIN)
+            # HANDLE MOUSE CLICKS
             # ----------------------------------------------------
             if self.last_click:
                 mx, my = self.last_click
                 self.last_click = None  # reset click
 
-                footer_y = self.renderer.header_h + self.puzzle_size
+                # GRID SELECTION
+                if self.selecting_grid:
+                    selected_grid = self.renderer.check_grid_button_click(mx, my)
+                    if selected_grid:
+                        print(f"Selected grid: {selected_grid}x{selected_grid}")
+                        self.reinitialize_game(selected_grid)
+                        self.selecting_grid = False
+                        self.game_started = True
+                        self.puzzle_pieces.scramble()
 
-                # QUIT BUTTON
-                if 20 <= mx <= 150 and footer_y + 10 <= my <= footer_y + 55:
-                    print("QUIT CLICKED")
-                    break
+                # GAME BUTTONS
+                elif self.game_started:
+                    footer_y = self.renderer.header_h + self.puzzle_size
 
-                # PLAY AGAIN / VERIFY BUTTON
-                btn_x1 = self.puzzle_size - 210
-                btn_x2 = self.puzzle_size - 20
+                    # QUIT BUTTON
+                    if 20 <= mx <= 150 and footer_y + 10 <= my <= footer_y + 55:
+                        print("QUIT CLICKED")
+                        break
 
-                if btn_x1 <= mx <= btn_x2 and footer_y + 10 <= my <= footer_y + 55:
-                    print("PLAY AGAIN CLICKED")
-                    self.game_started = False
-                    self.solved = False
-                    self.move_count = 0
-                    self.selected_piece = None
-                    self.puzzle_pieces.scramble()
+                    # PLAY AGAIN / VERIFY BUTTON
+                    btn_x1 = self.puzzle_size - 210
+                    btn_x2 = self.puzzle_size - 20
+
+                    if btn_x1 <= mx <= btn_x2 and footer_y + 10 <= my <= footer_y + 55:
+                        print("PLAY AGAIN CLICKED")
+                        self.selecting_grid = True
+                        self.game_started = False
+                        self.solved = False
+                        self.move_count = 0
+                        self.selected_piece = None
 
             # SHOW DISPLAY
             cv2.imshow("Live Glass Puzzle", display)
             
-            # KEYBOARD INPUT (optional)
+            # KEYBOARD INPUT
             key = cv2.waitKey(1) & 0xFF
             if key == ord('q'):
                 break
-            elif key == ord(' ') and not self.game_started:
-                self.game_started = True
-                self.puzzle_pieces.scramble()
+            elif key == ord(' '):
+                if self.selecting_grid:
+                    # Space bar doesn't work during grid selection
+                    pass
+                elif not self.game_started:
+                    self.game_started = True
+                    self.puzzle_pieces.scramble()
         
         cap.release()
         cv2.destroyAllWindows()

@@ -15,6 +15,92 @@ class GameRenderer:
 
 
     # ============================================================
+    # DRAW GRID SELECTION MENU
+    # ============================================================
+    def draw_grid_selection_menu(self, cropped_frame):
+        """Draw the initial grid selection menu with 3x3, 4x4, 5x5 options"""
+        display = cropped_frame.copy()
+        
+        # Draw header
+        display = self.draw_recaptcha_header(
+            display,
+            title="CAPTCHA Challenge",
+            subtitle="Select puzzle difficulty to start"
+        )
+        
+        # Menu area (center of puzzle area)
+        menu_y_start = self.header_h + 100
+        button_width = 140
+        button_height = 120
+        spacing = 20
+        
+        # Calculate total width to center buttons
+        total_width = (button_width * 3) + (spacing * 2)
+        start_x = (self.puzzle_size - total_width) // 2
+        
+        # Grid options with colors
+        grid_options = [
+            {"size": 3, "label": "3x3", "difficulty": "EASY", "color": (76, 175, 80)},
+            {"size": 4, "label": "4x4", "difficulty": "MEDIUM", "color": (33, 150, 243)},
+            {"size": 5, "label": "5x5", "difficulty": "HARD", "color": (103, 58, 183)}
+        ]
+        
+        for i, option in enumerate(grid_options):
+            x = start_x + (i * (button_width + spacing))
+            y = menu_y_start
+            
+            # Draw button background
+            cv2.rectangle(display, (x, y), (x + button_width, y + button_height), 
+                         option["color"], -1)
+            
+            # Draw button border
+            cv2.rectangle(display, (x, y), (x + button_width, y + button_height), 
+                         (255, 255, 255), 3)
+            
+            # Draw grid size label (large)
+            label = option["label"]
+            (text_w, text_h), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 1.8, 3)
+            text_x = x + (button_width - text_w) // 2
+            text_y = y + 55
+            cv2.putText(display, label, (text_x, text_y),
+                       cv2.FONT_HERSHEY_SIMPLEX, 1.8, (255, 255, 255), 3)
+            
+            # Draw difficulty label (small)
+            difficulty = option["difficulty"]
+            (text_w2, text_h2), _ = cv2.getTextSize(difficulty, cv2.FONT_HERSHEY_SIMPLEX, 0.7, 2)
+            text_x2 = x + (button_width - text_w2) // 2
+            text_y2 = y + 95
+            cv2.putText(display, difficulty, (text_x2, text_y2),
+                       cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+        
+        # Store button positions for click detection
+        self.grid_buttons = []
+        for i, option in enumerate(grid_options):
+            x = start_x + (i * (button_width + spacing))
+            y = menu_y_start
+            self.grid_buttons.append({
+                "size": option["size"],
+                "x1": x,
+                "y1": y,
+                "x2": x + button_width,
+                "y2": y + button_height
+            })
+        
+        return display
+
+
+    def check_grid_button_click(self, x, y):
+        """Check if a grid button was clicked and return the grid size"""
+        if not hasattr(self, 'grid_buttons'):
+            return None
+        
+        for button in self.grid_buttons:
+            if button["x1"] <= x <= button["x2"] and button["y1"] <= y <= button["y2"]:
+                return button["size"]
+        return None
+
+
+    # ============================================================
     # DRAW PUZZLE GRID
     # ============================================================
     def draw_puzzle(self, cropped_frame, pieces, selected_piece, solved):
