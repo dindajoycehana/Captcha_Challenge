@@ -63,25 +63,52 @@ class LiveGlassPuzzle:
         self.move_count = 0
     
     def handle_hand_interaction(self, hand_landmarks, display):
+        # Get hand position
         hand_pos = self.hand_tracker.get_hand_position(hand_landmarks, display.shape)
-        cv2.circle(display, hand_pos, 8, (255, 0, 255), -1)
+        hand_x, hand_y = hand_pos
+
+        # Draw finger dots at index finger tip
+        cv2.circle(display, (hand_x, hand_y), 8, (255, 0, 255), -1)
         
+        # Adjust hand y position relative to puzzle area
+        header_offset = self.renderer.header_h
+        hand_y_adj = hand_y - header_offset
+
+        #if hand is outside puzzle area, ignore
+        if hand_y_adj < 0 or hand_y_adj >= self.puzzle_size:
+            is_pinching = self.hand_tracker.is_pinching(hand_landmarks)
+            pinch_status = "PINCH" if is_pinching else "OPEN"
+            cv2.putText(display, pinch_status, (hand_x + 20, hand_y), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0) 
+                        if is_pinching else (255,255,255), 2)
+            return display
+        
+        # Check pinch gesture
         is_pinching = self.hand_tracker.is_pinching(hand_landmarks)
-        
+
+        #when pinching, select or move piece
         if is_pinching:
             if self.selected_piece is None:
                 piece = self.puzzle_pieces.get_piece_at_position(
-                    hand_pos, self.piece_size, self.puzzle_size
+                    (hand_x, hand_y_adj), 
+                    self.piece_size, 
+                    self.puzzle_size
                 )
+
                 if piece:
                     self.selected_piece = piece
-                    cv2.putText(display, "GRABBED!", (hand_pos[0] + 20, hand_pos[1]), 
+                    cv2.putText(display, "GRABBED!", (hand_x + 20, hand_y), 
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+                    
+        # when not pinching, release piece if any
         else:
             if self.selected_piece is not None:
                 target_piece = self.puzzle_pieces.get_piece_at_position(
-                    hand_pos, self.piece_size, self.puzzle_size
+                    (hand_x, hand_y_adj), 
+                    self.piece_size, 
+                    self.puzzle_size
                 )
+
                 if target_piece and target_piece['id'] != self.selected_piece['id']:
                     self.puzzle_pieces.swap_pieces(self.selected_piece, target_piece)
                     self.move_count += 1
@@ -93,22 +120,20 @@ class LiveGlassPuzzle:
                 
                 self.selected_piece = None
 
+        # Display pinch status (PINCH / OPEN)
         pinch_status = "PINCH" if is_pinching else "OPEN"
         color = (0, 255, 0) if is_pinching else (255, 255, 255)
 
-        # Hitung ukuran teks untuk rata kanan otomatis
+        # Calculate text size for positioning
         (text_w, text_h), _ = cv2.getTextSize(
             pinch_status, cv2.FONT_HERSHEY_SIMPLEX, 0.65, 2
         )
 
         x = self.renderer.puzzle_size - text_w - 20   
-        y = self.renderer.header_h + 25                  
+        y = header_offset + 25                  
 
-        cv2.putText(display, pinch_status,
-                    (x, y),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    0.65,
-                    color, 2)
+        cv2.putText(display, pinch_status,(x, y),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.65, color, 2)
 
         return display
 
@@ -121,8 +146,8 @@ class LiveGlassPuzzle:
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 
         # Register window + mouse callback (IMPORTANT)
-        cv2.namedWindow("Live Glass Puzzle")
-        cv2.setMouseCallback("Live Glass Puzzle", self.mouse_event)
+        cv2.namedWindow("Live Captcha Challenge")
+        cv2.setMouseCallback("Live Captcha Challenge", self.mouse_event)
         
         while cap.isOpened():
             ret, frame = cap.read()
@@ -221,7 +246,7 @@ class LiveGlassPuzzle:
                         self.selected_piece = None
 
             # SHOW DISPLAY
-            cv2.imshow("Live Glass Puzzle", display)
+            cv2.imshow("Live Captcha Challenge", display)
             
             # KEYBOARD INPUT
             key = cv2.waitKey(1) & 0xFF

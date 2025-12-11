@@ -15,7 +15,7 @@ class HandTracker:
         )
         self.mp_draw = mp.solutions.drawing_utils
         
-        # Pinch detection threshold
+        # Pinch detection threshold (Jarak antara ibu jari dan jari telunjuk)
         self.pinch_threshold = 0.05
     
     def process_frame(self, frame_rgb):

@@ -1,8 +1,3 @@
-"""
-Live Glass Puzzle Game - Main Entry Point
-Run this file to start the game
-"""
-
 from game.puzzle import LiveGlassPuzzle
 
 def main():

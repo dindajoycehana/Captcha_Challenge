@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 
-
 class GameRenderer:
     def __init__(self, puzzle_size, piece_size):
         self.puzzle_size = puzzle_size
@@ -12,7 +11,6 @@ class GameRenderer:
         self.footer_h = 60
 
         self.total_height = self.header_h + puzzle_size + self.footer_h
-
 
     # ============================================================
     # DRAW GRID SELECTION MENU
