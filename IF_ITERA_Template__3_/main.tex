@@ -1,0 +1,304 @@
+\documentclass[11pt,a4paper]{article}
+%%%%%%%%%%%%%%%%%%%%%%%%% Credit %%%%%%%%%%%%%%%%%%%%%%%%
+
+% template ini dibuat oleh martin.manullang@if.itera.ac.id untuk dipergunakan oleh seluruh sivitas akademik itera.
+
+%%%%%%%%%%%%%%%%%%%%%%%%% PACKAGE starts HERE %%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{caption}
+\captionsetup[table]{name=Tabel}
+\captionsetup[figure]{name=Gambar}
+\usepackage{tabulary}
+\usepackage{minted} % Dimuat, tapi listings yang aktif digunakan.
+\usepackage{fancyhdr}
+\usepackage{placeins}
+\usepackage[all]{xy}
+\usepackage{tikz}
+\usepackage{verbatim}
+\usepackage[left=2cm,right=2cm,top=3cm,bottom=2.5cm]{geometry}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks, % Menghapus non-breaking space
+    linkcolor={red!50!black},
+    citecolor={blue!50!black},
+    urlcolor={blue!80!black}
+}
+% \usepackage{caption} % Sudah dimuat
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{psfrag}
+\usepackage[T1]{fontenc}
+\usepackage[scaled]{beramono}
+\usepackage{listings}
+\usepackage{xcolor} % Menghapus non-breaking space
+% custom color & style for listing
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\definecolor{LightGray}{gray}{0.9}
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour}, 
+    commentstyle=\color{green},
+    keywordstyle=\color{codegreen},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                   
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+\renewcommand{\lstlistingname}{Kode}
+%%%%%%%%%%%%%%%%%%%%%%%%% PACKAGE ends HERE %%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%% Data Diri %%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\course}{\textbf{Sistem / Teknologi Multimedia (IF40305)}}
+\newcommand{\studentOne}{\textbf{Dinda Joycehana (122140048)}}
+\newcommand{\studentTwo}{\textbf{Asavira Azzahra (122140067)}}
+\newcommand{\studentThree}{\textbf{Hizkia Christovita Siahaan (122140110)}}
+\newcommand{\assignment}{\textbf{Tugas Besar}}
+
+%%%%%%%%%%%%%%%%%%% using theorem style %%%%%%%%%%%%%%%%%%%%
+\newtheorem{thm}{Theorem}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{exa}[thm]{Example}
+\newtheorem{rem}[thm]{Remark}
+\newtheorem{coro}[thm]{Corollary}
+\newtheorem{quest}{Question}[section]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{lipsum}%% a garbage package you don't need except to create examples.
+% \usepackage{fancyhdr} % Sudah dimuat
+\pagestyle{fancy}
+\lhead{Dinda Joycehana (122140048), Asavira Azzahra (122140067), Hizkia Christovita Siahaan (122140110)}
+\rhead{\thepage} % Menghapus spasi ekstra
+\cfoot{\textbf{Captcha Challenge}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+%%%%%%%%%%%%%%  Shortcut for usual set of numbers  %%%%%%%%%%%
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\setlength\headheight{14pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%555
+\begin{document}
+\thispagestyle{empty}
+\begin{center}
+    \includegraphics[scale = 0.15]{Figure/ifitera-header.png}
+    \vspace{0.1cm}
+\end{center}
+\noindent
+\rule{17cm}{0.2cm}\\[0.3cm]
+Mata Kuliah: \course \hfill Tugas: \assignment\\[0.1cm]
+Nama Anggota: \hfill\\
+1. \studentOne \hfill\\
+2. \studentTwo \hfill\\
+3. \studentThree \hfill Tanggal: 11 Desember 2025\\
+\rule{17cm}{0.05cm}
+\vspace{0.1cm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BODY DOCUMENT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Deskripsi Projek}
+
+Live Captcha Challenge adalah sebuah permainan berbasis CAPTCHA yang menggunakan kamera dan gerakan tangan untuk menyusun puzzle secara live. Tidak seperti CAPTCHA puzzle biasa yang menggunakan gambar statis, proyek ini menampilkan potongan-potongan dari video webcam pengguna secara real-time. Pemain harus mengatur ulang potongan-potongan tersebut hingga membentuk tampilan kamera yang utuh.\par
+
+Interaksi pada game ini dilakukan menggunakan gesture pinch (menggabungkan ibu jari dan telunjuk). Gesture tersebut dideteksi menggunakan MediaPipe Hands, sehingga pemain dapat mengambil dan memindahkan blok puzzle hanya dengan menggerakkan tangan di depan kamera. Hal ini menjadikan permainan lebih interaktif dan lebih sulit ditiru oleh bot. \par
+
+Dalam proyek ini digunakan beberapa teknologi multimedia, seperti OpenCV untuk menangkap dan menampilkan video webcam, MediaPipe untuk mendeteksi posisi jari dan gerakan tangan, serta Pygame untuk memberikan efek suara saat pemain menukar blok atau menyelesaikan puzzle. Game ini juga dilengkapi fitur hitungan langkah, indikator posisi puzzle yang benar, dan efek kemenangan.\par
+
+Secara sederhana, Live Captcha Challenge adalah permainan puzzle berbasis webcam yang menggabungkan teknologi computer vision dan gesture recognition untuk menciptakan pengalaman bermain yang unik, interaktif, dan lebih aman dibanding CAPTCHA puzzle tradisional.\par
+
+\section{Alat dan Bahan}
+Pada pengembangan proyek Live Captcha Challenge, digunakan beberapa alat dan bahan pendukung yang terdiri dari perangkat keras, perangkat lunak, serta library pendukung untuk menjalankan sistem pelacakan tangan dan puzzle berbasis webcam.
+    \subsection{Perangkat Keras}
+    Pengembangan dan pengujian proyek ini dilakukan menggunakan perangkat keras sebagai berikut:
+    \begin{itemize}
+        \item \textbf{Komputer/Laptop}: Digunakan untuk menulis kode, menjalankan aplikasi, dan menguji performa game.
+        \item \textbf{Webcam}: Kamera eksternal atau bawaan laptop yang berfungsi menangkap video secara real-time. Webcam feed akan dipotong menjadi puzzle dan digunakan sebagai input bagi sistem \textit{hand tracking}. Direkomendasikan menggunakan webcam beresolusi minimal 720p, karena kualitas webcam mempengaruhi akurasi deteksi tangan dan pengalaman bermain.
+    \end{itemize}
+
+    \subsection{Bahasa Pemrograman}
+    Proyek ini dibuat menggunakan Python versi 3.10. Versi ini dipilih karena stabil, kompatibel dengan library terbaru, dan mendukung penggunaan OpenCV serta MediaPipe tanpa masalah.
+
+    \subsection{\textit{Library}}
+    Beberapa library Python yang digunakan untuk membangun fitur-fitur inti pada proyek ini yaitu:
+    \begin{itemize}
+        \item \textbf{OpenCV}: Digunakan untuk menangkap video dari webcam, memproses frame video, dan menampilkan antarmuka permainan.
+        \item \textbf{MediaPipe}: Library ini menyediakan model \textit{hand tracking} yang digunakan untuk mendeteksi posisi jari dan gerakan tangan pemain secara real-time.
+        \item \textbf{Pygame}: Digunakan untuk mengelola audio dalam game, seperti efek suara saat pemain menukar blok puzzle atau menyelesaikan permainan.
+        \item \textbf{NumPy}: Digunakan untuk manipulasi array dan operasi matematika yang diperlukan dalam pemrosesan gambar dan logika permainan.
+    \end{itemize}
+    
+    \subsection{Struktur Proyek}
+    Proyek Live Captcha Challenge memiliki struktur direktori sebagai berikut:
+    \begin{verbatim}
+    Live_Captcha_Challenge/
+    |-- game/
+    |   |-- __init__.py
+    |   |-- game_renderer.py
+    |   |-- hand_tracker.py
+    |   |-- puzzle_pieces.py
+    |   |-- puzzle.py
+    |   |-- sound.py
+    |-- assets/
+    |   |-- sounds/
+    |-- main.py
+    |-- requirements.txt
+    |-- README.md
+    \end{verbatim}
+
+\section{Penjelasan}
+Program Live Captcha Challenge dibangun berdasarkan beberapa modul Python yang saling terintegrasi untuk menjalankan seluruh fitur permainan. Setiap modul memiliki perannya masing-masing, mulai dari pendeteksian tangan, logika permainan puzzle, rendering tampilan, hingga pemrosesan suara. Bagian ini menjelaskan lingkungan pengembangan, instalasi dependensi, serta penjelasan setiap modul yang digunakan dalam sistem.
+    \subsection{\textit{Setup} Lingkungan Pengembangan}
+    Proyek ini dikembangkan menggunakan Python 3.10 pada environment virtual untuk menjaga isolasi dependensi, sehingga tidak mengganggu environment sistem utama. Pada pengembangan proyek ini menggunakan UV. Berikut ini langkah-langkah untuk menyiapkan UV environment : 
+    \begin{lstlisting}[language=bash, caption={Membuat UV environment}]
+    pip install uv  #Instalasi uv 
+    uv venv --python=python3.10  #Membuat environment virtual dengan python 3.10
+    .venv\Scripts\activate #Aktifkan environment virtual
+    \end{lstlisting}
+
+    \subsection{Instalasi \textit{Library}}
+    Agar program dapat berjalan dengan baik, seluruh \textit{library} pendukung harus dipasang terlebih dahulu. 
+    \begin{lstlisting}
+    uv pip install numpy opencv-python mediapipe pygame
+    \end{lstlisting}
+    
+    Dependensi yang diperlukan pada proyek ini sudah disediakan dalam file \textbf{requirements.txt}, sehingga proses instalasi \textit{library} dapat dilakukan melalui satu perintah berikut:
+    \begin{lstlisting}[language=bash, caption={Instalasi dependensi melalui file requirements.txt}]
+    uv pip install -U -r requirements.txt
+    \end{lstlisting}
+
+    \subsection{Mekanisme Kerja Sistem}
+    Permainan ini menggunakan konsep scrambled glass blocks, yaitu potongan-potongan puzzle yang tetap menampilkan video webcam secara langsung (live feed), bukan gambar statis. Dengan konsep ini, pemain tetap dapat melihat gerakan real-time di setiap blok puzzle.
+    
+    Perbedaan utama dengan Captcha puzzle biasa : 
+    \begin{itemize}
+        \item \textbf{Live Feed pada Setiap Blok}: Setiap potongan puzzle adalah "window" yang menampilkan bagian tertentu dari video webcam secara langsung, sehingga pemain dapat melihat gerakan real-time di setiap blok (seluruh video dari webcam selalu aktif di balik potongan puzzle).
+        \item \textbf{Interaksi dengan Gesture Tangan}: Pemain menggunakan gesture pinch (menggabungkan ibu jari dan telunjuk) untuk memilih dan memindahkan potongan puzzle, yang dideteksi menggunakan MediaPipe Hands.
+        \item \textbf{Tantangan Keamanan Lebih Tinggi}: Dengan menggunakan video live feed dan gesture recognition, sistem ini lebih sulit untuk diotomatisasi oleh bot dibandingkan dengan CAPTCHA puzzle tradisional.
+    \end{itemize}
+
+    \subsection{Hand Tracker menggunakan MediaPipe}
+    Modul \texttt{hand\_tracker.py} menggunakan MediaPipe Hands untuk mendeteksi posisi tangan dan jari pemain secara real-time. Modul ini menyediakan fungsi untuk menginisialisasi model pelacakan tangan, memproses frame video dari webcam, dan mengembalikan koordinat jari yang diperlukan untuk interaksi dalam permainan. Berikut adalah penjelasan fungsi utama dalam modul ini:
+    \subsection{Webcam Puzzle}
+    Modul \texttt{puzzle\_pieces.py dan puzzle.py} bertanggung jawab untuk mengelola logika permainan puzzle berbasis webcam. Modul ini menangani pembagian frame video menjadi potongan-potongan puzzle, pengacakan posisi potongan, serta pengecekan apakah puzzle telah tersusun dengan benar. Berikut adalah penjelasan fungsi utama dalam modul ini:
+    \subsection{Tampilan Game}
+    Modul \texttt{game\_renderer.py} bertanggung jawab untuk menampilkan antarmuka permainan kepada pemain. Modul ini menggunakan OpenCV untuk menggambar elemen-elemen permainan seperti potongan puzzle, instruksi, dan skor pada frame video yang ditangkap dari webcam. Berikut adalah penjelasan fungsi utama dalam modul ini:
+    \subsection{Pemrosesan Suara}
+    Modul \texttt{sound.py} menggunakan Pygame untuk mengelola efek suara dalam permainan. Modul ini menyediakan fungsi untuk memuat dan memutar suara saat pemain menukar potongan puzzle atau menyelesaikan permainan. Berikut adalah penjelasan fungsi utama dalam modul ini:
+    \subsection{Program Utama}
+    File \texttt{main.py} adalah titik masuk utama dari program Live Captcha Challenge. File ini mengintegrasikan semua modul yang telah dijelaskan sebelumnya untuk menjalankan permainan secara keseluruhan. Berikut adalah penjelasan alur utama dalam file ini:
+
+    \section{Pembahasan}
+Pada bagian ini akan dibahas mengenai implementasi dari filter Live Captcha Challenge yang telah dikembangkan. Filter ini menggunakan teknologi computer vision untuk mendeteksi gesture tangan pengguna dalam menyelesaikan tantangan CAPTCHA berbasis video webcam secara real-time. Filter ini memanfaatkan MediaPipe Hands untuk mendeteksi posisi jari dan gerakan tangan pengguna. Dengan menggunakan gesture pinch (menggabungkan ibu jari dan telunjuk), pengguna dapat memilih pot
+
+\section{Hasil}
+
+Hasil penerapan dari filter yang kami kembangkan ditunjukkan pada Gambar berikut.
+
+\begin{figure}[htbp]
+    \centering
+        \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Figure/gridSelection.png}
+        \caption{Tampilan Start}
+        \label{fig:start}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Figure/openhand.png}
+        \caption{Openhand Terdeteksi}
+        \label{fig:openhand}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Figure/pinch.png}
+        \caption{Pinch Terdeteksi}
+        \label{fig:pinch}
+    \end{subfigure}
+    \caption{Tampilan start, open hand, dan pinch pada Live Captcha Challenge.}
+    \label{fig:live_captcha_challenge}
+\end{figure}
+
+% --- 2. FIGURE GRID 3x3, 4x4, 5x5 ---
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Figure/grid3.png}
+        \caption{Grid 3x3 acak}
+        \label{fig:grid3x3}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Figure/grid4.png}
+        \caption{Grid 4x4 acak}
+        \label{fig:grid4x4}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Figure/grid5.png}
+        \caption{Grid 5x5 acak}
+        \label{fig:grid5x5}
+    \end{subfigure}
+
+    \caption{Tampilan grid acak 3x3, 4x4, dan 5x5.}
+    \label{fig:grid_all}
+\end{figure}
+
+% --- 3. FIGURE SOLVED ---
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Figure/solved3.png}
+    \caption{Tampilan Solved 3x3}
+    \label{fig:Solved3x3}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Figure/solved4.png}
+    \caption{Tampilan Solved 4x4}
+    \label{fig:Solved4x4}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Figure/solved5.png}
+    \caption{Tampilan Solved 5x5}
+    \label{fig:Solved5x5}
+    \end{subfigure}
+    \caption{Tampilan grid solved 3x3, 4x4, dan 5x5.}
+    \label{fig:grid_solved_all}
+\end{figure}
+
+
+\FloatBarrier
+(Penjelasan gambar hasil) \par
+
+\section{Kesimpulan}
+
+\newpage
+\bibliographystyle{IEEEtran}
+\bibliography{Referensi} % Pastikan file Referensi.bib ada
+\url{}
+\end{document}
