@@ -4,7 +4,8 @@
 
 > **Tugas Besar Mata Kuliah Multimedia (IF25-40305)**  
 > Informatika – Institut Teknologi Sumatera
-> Video Demo Project dapat diakses pada tautan berikut : [Demo Live Captcha Challenge ](https://youtu.be/V_CvANP3GGE)
+
+>Video Demo Project dapat diakses pada tautan berikut : [Demo Live Captcha Challenge ](https://youtu.be/V_CvANP3GGE)
 
 ## 👥 Anggota Kelompok
 
