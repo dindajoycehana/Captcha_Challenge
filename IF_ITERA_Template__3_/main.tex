@@ -193,18 +193,276 @@ Program Live Captcha Challenge dibangun berdasarkan beberapa modul Python yang s
     \end{itemize}
 
     \subsection{Hand Tracker menggunakan MediaPipe}
-    Modul \texttt{hand\_tracker.py} menggunakan MediaPipe Hands untuk mendeteksi posisi tangan dan jari pemain secara real-time. Modul ini menyediakan fungsi untuk menginisialisasi model pelacakan tangan, memproses frame video dari webcam, dan mengembalikan koordinat jari yang diperlukan untuk interaksi dalam permainan. Berikut adalah penjelasan fungsi utama dalam modul ini:
-    \subsection{Webcam Puzzle}
-    Modul \texttt{puzzle\_pieces.py dan puzzle.py} bertanggung jawab untuk mengelola logika permainan puzzle berbasis webcam. Modul ini menangani pembagian frame video menjadi potongan-potongan puzzle, pengacakan posisi potongan, serta pengecekan apakah puzzle telah tersusun dengan benar. Berikut adalah penjelasan fungsi utama dalam modul ini:
-    \subsection{Tampilan Game}
-    Modul \texttt{game\_renderer.py} bertanggung jawab untuk menampilkan antarmuka permainan kepada pemain. Modul ini menggunakan OpenCV untuk menggambar elemen-elemen permainan seperti potongan puzzle, instruksi, dan skor pada frame video yang ditangkap dari webcam. Berikut adalah penjelasan fungsi utama dalam modul ini:
-    \subsection{Pemrosesan Suara}
-    Modul \texttt{sound.py} menggunakan Pygame untuk mengelola efek suara dalam permainan. Modul ini menyediakan fungsi untuk memuat dan memutar suara saat pemain menukar potongan puzzle atau menyelesaikan permainan. Berikut adalah penjelasan fungsi utama dalam modul ini:
-    \subsection{Program Utama}
-    File \texttt{main.py} adalah titik masuk utama dari program Live Captcha Challenge. File ini mengintegrasikan semua modul yang telah dijelaskan sebelumnya untuk menjalankan permainan secara keseluruhan. Berikut adalah penjelasan alur utama dalam file ini:
 
-    \section{Pembahasan}
-Pada bagian ini akan dibahas mengenai implementasi dari filter Live Captcha Challenge yang telah dikembangkan. Filter ini menggunakan teknologi computer vision untuk mendeteksi gesture tangan pengguna dalam menyelesaikan tantangan CAPTCHA berbasis video webcam secara real-time. Filter ini memanfaatkan MediaPipe Hands untuk mendeteksi posisi jari dan gerakan tangan pengguna. Dengan menggunakan gesture pinch (menggabungkan ibu jari dan telunjuk), pengguna dapat memilih pot
+    Modul \texttt{hand\_tracker.py} berfungsi sebagai sistem pendeteksi tangan yang digunakan untuk interaksi di dalam permainan. Modul ini memuat kelas \texttt{HandTracker} yang menangani proses inisialisasi model MediaPipe Hands, pemrosesan frame, pendeteksian gesture pinch, serta pengambilan koordinat jari pemain.
+
+    Kode berikut digunakan untuk menginisialisasi model deteksi tangan:
+
+    \begin{lstlisting}[language=python]
+    self.mp_hands = mp.solutions.hands
+    self.hands = self.mp_hands.Hands(
+        static_image_mode=False,
+        max_num_hands=1,
+        min_detection_confidence=0.5,
+        min_tracking_confidence=0.5
+    )
+    \end{lstlisting}
+
+    Fungsi utama dalam modul ini:
+
+    \begin{itemize}
+        \item \textbf{\texttt{process\_frame(frame\_rgb)}}  
+        Memproses sebuah frame RGB menjadi objek hasil deteksi MediaPipe.  
+    \begin{lstlisting}[language=python]
+    return self.hands.process(frame_rgb)
+    \end{lstlisting}
+
+        \item \textbf{\texttt{get\_hand\_position(hand\_landmarks, frame\_shape)}}  
+        Mengambil koordinat piksel jari telunjuk (landmark ke-8) untuk menentukan posisi tangan di layar.  
+    \begin{lstlisting}[language=python]
+    index_tip = hand_landmarks.landmark[8]
+    return (int(index_tip.x * w), int(index_tip.y * h))
+    \end{lstlisting}
+
+        \item \textbf{\texttt{is\_pinching(hand\_landmarks)}}  
+        Menentukan apakah pemain sedang melakukan gesture \textit{pinch} dengan menghitung jarak Euclidean antara ibu jari (landmark 4) dan telunjuk (landmark 8).  
+    \begin{lstlisting}[language=python]
+    distance = math.sqrt(
+        (thumb_tip.x - index_tip.x)**2 +
+        (thumb_tip.y - index_tip.y)**2
+    )
+    return distance < self.pinch_threshold
+    \end{lstlisting}
+
+        \item \textbf{\texttt{draw\_landmarks(frame, hand\_landmarks)}}  
+        Menggambar titik dan koneksi landmark tangan pada frame.
+    \end{itemize}
+
+    Modul ini menjadi fondasi interaksi dalam game karena semua aksi pemain dilakukan melalui gesture tangan.
+
+        \subsection{Webcam Puzzle}
+
+    Modul \texttt{puzzle\_pieces.py} bertanggung jawab untuk membuat, mengacak, dan memvalidasi potongan puzzle. Setiap potongan puzzle memiliki dua atribut penting: \texttt{correct\_pos} (posisi yang benar) dan \texttt{current\_pos} (posisi saat ini).
+
+    Pembuatan potongan puzzle dilakukan sebagai berikut:
+
+    \begin{lstlisting}[language=python]
+    self.pieces.append({
+        'correct_pos': (col, row),
+        'current_pos': (col, row),
+        'id': row * self.grid_size + col
+    })
+    \end{lstlisting}
+
+    Pengacakan puzzle dilakukan menggunakan \texttt{random.shuffle} terhadap seluruh kemungkinan posisi:
+
+    \begin{lstlisting}[language=python]
+    positions = [(col, row) for row in range(...) for col in range(...)]
+    random.shuffle(positions)
+    \end{lstlisting}
+
+    Proses memilih potongan berdasarkan posisi tangan dilakukan melalui fungsi:
+
+    \begin{lstlisting}[language=python]
+    grid_x = x // piece_size
+    grid_y = y // piece_size
+    \end{lstlisting}
+
+    Pertukaran posisi dua potongan puzzle dilakukan dengan:
+
+    \begin{lstlisting}[language=python]
+    piece1['current_pos'], piece2['current_pos'] = \
+        piece2['current_pos'], piece1['current_pos']
+    \end{lstlisting}
+
+    Pengecekan apakah puzzle sudah selesai dilakukan dengan memeriksa apakah seluruh \texttt{current\_pos} sama dengan \texttt{correct\_pos}.
+
+    Modul ini menyediakan logika inti permainan: struktur data puzzle, pengacakan, pemilihan, dan pengecekan kondisi selesai.
+
+    \subsection{Tampilan Game}
+
+    Modul \texttt{game\_renderer.py} mengatur seluruh proses visualisasi puzzle. Fungsi yang paling penting adalah \texttt{draw\_puzzle()}, yang menampilkan potongan video webcam ke posisi masing-masing pada grid puzzle.
+
+    Berikut adalah cara program menampilkan potongan video webcam:
+
+    \begin{lstlisting}[language=python]
+    piece_view = cropped_frame[
+        src_y:src_y+self.piece_size,
+        src_x:src_x+self.piece_size
+    ].copy()
+    \end{lstlisting}
+
+    Potongan tersebut kemudian digambar ke tampilan puzzle sesuai posisi saat ini:
+
+    \begin{lstlisting}[language=python]
+    display[y:y+self.piece_size, x:x+self.piece_size] = piece_view
+    \end{lstlisting}
+
+    Renderer juga menggambar border berwarna hijau apabila potongan sudah berada pada posisi yang benar:
+
+    \begin{lstlisting}[language=python]
+    color = (0, 255, 0) if piece['current_pos'] == piece['correct_pos'] else (255, 255, 255)
+    \end{lstlisting}
+
+    Selain itu renderer juga menyediakan:
+
+    \begin{itemize}
+        \item \textbf{\texttt{draw\_start\_screen()}} — menampilkan instruksi awal.
+        \item \textbf{\texttt{draw\_move\_count()}} — menampilkan jumlah langkah pemain.
+        \item \textbf{\texttt{draw\_solved\_screen()}} — overlay hijau dan teks ketika puzzle selesai.
+    \end{itemize}
+
+    Renderer memastikan permainan terlihat jelas, informatif, dan responsif.
+
+
+    \subsection{Pemrosesan Suara}
+
+    Modul \texttt{sound.py} menggunakan \textit{Pygame Mixer} untuk memuat dan memainkan efek suara. Inisialisasi mixer dilakukan dengan:
+
+    \begin{lstlisting}[language=python]
+    pygame.mixer.init()
+    \end{lstlisting}
+
+    Memuat file audio dilakukan menggunakan path relatif:
+
+    \begin{lstlisting}[language=python]
+    click_sound = pygame.mixer.Sound(os.path.join(SOUND_DIR, "click.wav"))
+    win_sound   = pygame.mixer.Sound(os.path.join(SOUND_DIR, "win.wav"))
+    \end{lstlisting}
+
+    Suara klik dimainkan dengan:
+
+    \begin{lstlisting}[language=python]
+    click_sound.play()
+    click_sound.set_volume(1.0)
+    \end{lstlisting}
+
+    Sedangkan suara kemenangan dimainkan dengan:
+
+    \begin{lstlisting}[language=python]
+    win_sound.set_volume(0.5)
+    win_sound.play()
+    \end{lstlisting}
+
+    Modul ini memberikan umpan balik audio sehingga permainan terasa lebih hidup dan interaktif.
+
+
+    \subsection{Program Utama}
+
+    File \texttt{main.py} merupakan titik masuk permainan. Program akan mencetak instruksi awal, membuat objek \texttt{LiveGlassPuzzle}, dan menjalankan permainan melalui fungsi \texttt{run()}.
+
+    Pemanggilan utama dilakukan melalui:
+
+    \begin{lstlisting}[language=python]
+    puzzle = LiveGlassPuzzle(grid_size=3)
+    puzzle.run()
+    \end{lstlisting}
+
+    Di dalam \texttt{run()}, terdapat game loop yang menangani:
+
+    \begin{itemize}
+        \item pembacaan frame webcam,
+        \item pemrosesan gesture tangan,
+        \item pembaruan tampilan puzzle,
+        \item pengecekan kondisi selesai,
+        \item serta input keyboard (SPACE, R, Q).
+    \end{itemize}
+
+    Game loop terus berjalan hingga pemain menekan tombol \texttt{Q}:
+
+    \begin{lstlisting}[language=python]
+    while cap.isOpened():
+        ret, frame = cap.read()
+        ...
+    \end{lstlisting}
+
+    Program utama ini menghubungkan seluruh modul menjadi satu sistem permainan yang interaktif.
+
+
+    \subsection{Pembahasan Implementasi Sistem}
+
+    Pada implementasi sistem, filter Live Captcha Challenge dibangun dengan mengintegrasikan beberapa modul utama yaitu \texttt{hand\_tracker.py}, \texttt{puzzle\_pieces.py}, \texttt{game\_renderer.py}, \texttt{sound.py}, serta \texttt{main.py} sebagai pengendali utama. Setiap modul memiliki peran penting dalam menjalankan fungsionalitas permainan secara menyeluruh.
+
+    \subsubsection{Deteksi Tangan dan Gesture Pinch}
+
+    Deteksi tangan menggunakan MediaPipe Hands merupakan komponen inti dalam interaksi permainan. Modul \texttt{hand\_tracker.py} mengolah frame yang ditangkap dari webcam dan menghasilkan posisi koordinat jari pemain secara real-time. Gesture \textit{pinch} (menggabungkan ibu jari dan telunjuk) digunakan sebagai bentuk “klik virtual” untuk memilih sebuah potongan puzzle.
+
+    Proses pinch dihitung dengan mengukur jarak Euclidean antara landmark jari yang relevan. Jika jarak di bawah ambang batas tertentu, sistem menganggap pemain sedang melakukan pinch. Pendekatan ini memungkinkan interaksi yang natural dan responsif tanpa menggunakan perangkat tambahan.
+
+    \subsubsection{Pemotongan Frame Webcam Menjadi Puzzle}
+
+    Modul \texttt{puzzle\_pieces.py} bertanggung jawab untuk membagi frame webcam menjadi beberapa potongan dengan ukuran yang sama. Setiap potongan direpresentasikan sebagai sebuah objek yang memiliki:
+
+    \begin{itemize}
+        \item posisi benar (\texttt{correct\_pos}),
+        \item posisi saat ini (\texttt{current\_pos}),
+        \item dan identitas unik.
+    \end{itemize}
+
+    Setelah potongan dibuat, modul ini juga melakukan pengacakan posisi sehingga susunan awal puzzle tidak beraturan. Tantangan pemain adalah mengembalikannya ke susunan awal seperti tampilan kamera sebenarnya.
+
+    \subsubsection{Mekanisme Pertukaran Potongan Puzzle}
+
+    Ketika sistem mendeteksi bahwa koordinat pinch berada pada salah satu potongan puzzle, potongan tersebut dianggap terpilih. Jika pemain kemudian melakukan pinch pada potongan lain, maka kedua potongan tersebut dipertukarkan.
+
+    Proses pertukaran dilakukan dengan menukar nilai \texttt{current\_pos} antar potongan. Interaksi ini dirancang menyerupai permainan puzzle klasik, tetapi dengan tambahan tantangan karena semua potongan menampilkan bagian video yang masih aktif bergerak.
+
+    \subsubsection{Proses Rendering Tampilan Puzzle}
+
+    Modul \texttt{game\_renderer.py} melakukan rendering seluruh tampilan permainan. Setiap potongan puzzle ditampilkan berdasarkan posisi saat ini, sambil tetap mengambil konten video secara langsung dari webcam. Sistem juga memberikan indikator visual berupa:
+
+    \begin{itemize}
+        \item \textbf{border hijau} ketika potongan berada di posisi yang benar,
+        \item \textbf{border putih} ketika potongan belum sesuai,
+        \item teks instruksi seperti “Pinch untuk memilih puzzle” atau “Puzzle Solved”.
+    \end{itemize}
+
+    Renderer bekerja pada setiap frame sehingga permainan tampak dinamis dan interaktif.
+
+    \subsubsection{Umpan Balik Audio}
+
+    Pemrosesan audio dilakukan oleh modul \texttt{sound.py}. Dua suara utama digunakan dalam permainan:
+
+    \begin{itemize}
+        \item efek suara klik saat pemain menukar potongan,
+        \item efek suara kemenangan ketika puzzle berhasil diselesaikan.
+    \end{itemize}
+
+    Penambahan audio meningkatkan pengalaman bermain dan membuat interaksi terasa lebih imersif.
+
+    \subsubsection{Alur Program Utama}
+
+    File \texttt{main.py} menghubungkan seluruh modul dan menjalankan game loop. Pada alur utama, program melakukan:
+
+    \begin{enumerate}
+        \item membaca frame webcam,
+        \item mendeteksi tangan dan gesture,
+        \item memperbarui logika permainan (pertukaran puzzle),
+        \item menampilkan tampilan puzzle,
+        \item memberikan feedback audio,
+        \item menghentikan permainan jika pemain menekan tombol tertentu.
+    \end{enumerate}
+
+    Game loop ini berjalan terus-menerus hingga pemain keluar dari permainan.
+
+    \subsection{Analisis Performa Sistem}
+
+    Berdasarkan hasil implementasi, sistem dapat berjalan secara real-time pada laptop dengan spesifikasi standar. MediaPipe Hands mampu mendeteksi gesture dengan cukup stabil selama pencahayaan ruangan memadai. Proses rendering puzzle juga berjalan lancar karena setiap potongan hanya memerlukan operasi pemotongan frame dan penyalinan matriks sederhana.
+
+    Tantangan utama pada performa muncul ketika ukuran grid diperbesar (misalnya 5x5), karena jumlah operasi pemotongan dan rendering meningkat. Meskipun demikian, sistem tetap dapat berjalan dengan baik tanpa penurunan frame rate yang signifikan pada pengujian.
+
+    \subsection{Keterbatasan Implementasi}
+
+    Beberapa keterbatasan pada sistem ini antara lain:
+
+    \begin{itemize}
+        \item Akurasi gesture dapat menurun pada kondisi pencahayaan yang buruk.
+        \item Sistem hanya mendukung satu tangan aktif; deteksi dua tangan belum diimplementasikan.
+        \item Puzzle menggunakan batasan kotak persegi sehingga tidak mendukung bentuk puzzle yang kompleks.
+    \end{itemize}
+
+    Keterbatasan ini dapat diperbaiki pada versi pengembangan selanjutnya dengan menambahkan model gesture yang lebih canggih serta optimasi tampilan.
+
 
 \section{Hasil}
 
@@ -296,6 +554,16 @@ Hasil penerapan dari filter yang kami kembangkan ditunjukkan pada Gambar berikut
 (Penjelasan gambar hasil) \par
 
 \section{Kesimpulan}
+
+Berdasarkan proses perancangan, implementasi, dan pengujian yang telah dilakukan, proyek \textit{Live Captcha Challenge} berhasil dikembangkan sebagai permainan interaktif berbasis \textit{computer vision} yang menggabungkan teknologi hand tracking dan video webcam secara real-time. Sistem mampu mendeteksi gesture \textit{pinch} secara akurat sehingga pengguna dapat berinteraksi langsung dengan potongan puzzle yang berasal dari \textit{live feed} kamera.
+
+Integrasi seluruh modul utama, yaitu \texttt{hand\_tracker.py}, \texttt{puzzle\_pieces.py}, \texttt{game\_renderer.py}, \texttt{sound.py}, dan \texttt{main.py}, menghasilkan permainan yang responsif, stabil, serta mudah dimainkan. MediaPipe Hands mendukung deteksi posisi jari secara real-time, sementara OpenCV menyediakan pengolahan dan rendering puzzle yang halus. Penambahan efek suara melalui Pygame turut meningkatkan pengalaman bermain melalui umpan balik audio pada setiap interaksi.
+
+Hasil pengujian menunjukkan bahwa permainan dapat berjalan dengan baik pada perangkat dengan spesifikasi standar, baik untuk konfigurasi grid 3x3, 4x4, maupun 5x5. Penggunaan \textit{live feed} pada setiap potongan puzzle memberikan pengalaman yang dinamis serta menciptakan tingkat keamanan lebih tinggi dibandingkan CAPTCHA berbasis gambar statis, sehingga lebih sulit ditiru oleh sistem otomatis.
+
+Meskipun demikian, permainan ini masih memiliki beberapa keterbatasan, seperti sensitivitas terhadap pencahayaan, deteksi satu tangan saja, serta bentuk puzzle yang masih sederhana. Keterbatasan ini sekaligus membuka peluang pengembangan lanjutan, seperti peningkatan robustnes deteksi gesture, penambahan variasi interaksi, maupun pengembangan bentuk puzzle yang lebih kompleks.
+
+Secara keseluruhan, proyek ini berhasil mencapai tujuan yang ditetapkan, yaitu mengembangkan permainan CAPTCHA interaktif berbasis webcam dengan gesture tangan sebagai mekanisme kontrol utama. Implementasi yang dihasilkan tidak hanya memberikan pengalaman bermain yang menarik, tetapi juga memiliki potensi sebagai pendekatan CAPTCHA yang lebih aman dan sulit dieksploitasi oleh sistem otomatis.
 
 \newpage
 \bibliographystyle{IEEEtran}
