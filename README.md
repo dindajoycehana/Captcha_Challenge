@@ -1,4 +1,4 @@
-# 🪟Live Chaptcha Challenge
+# 🪟Live Captcha Challenge
 
 **Live Captcha Challenge** adalah permainan puzzle interaktif berbasis webcam yang memanfaatkan Hand Tracking (MediaPipe Hands) untuk menggerakkan dan menukar blok-blok puzzle secara real-time. Pemain menggunakan gesture pinch untuk mengambil potongan puzzle yang menampilkan bagian tertentu dari video webcam, kemudian menyusunnya kembali hingga membentuk tampilan utuh.
 
